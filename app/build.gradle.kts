@@ -63,6 +63,8 @@ dependencies {
 
     // dependency injection
     implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+
     kapt(libs.hilt.android.compiler)
 
     // gson

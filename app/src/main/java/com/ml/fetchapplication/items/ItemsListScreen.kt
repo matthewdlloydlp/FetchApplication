@@ -1,31 +1,30 @@
 package com.ml.fetchapplication.items
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ml.fetchapplication.data.models.Item
 import com.ml.fetchapplication.ui.theme.FetchApplicationTheme
 
 @Composable
-fun ItemsListScreen(modifier: Modifier = Modifier, viewModel: OrderViewModel = hiltViewModel()) {
+fun ItemsListScreen(
+    modifier: Modifier = Modifier,
+    viewModel: ItemsListViewModel = hiltViewModel()
+) {
     val items by viewModel.uiState.collectAsStateWithLifecycle()
-    if (items is OrderUiState.Success) {
-        OrderScreen(
-            items = (items as OrderUiState.Success).data,
-            onSave = viewModel::addOrder,
+    if (items is ItemUiState.Success) {
+        ItemsListScreen(
+            items = (items as ItemUiState.Success).data,
             modifier = modifier
         )
     } else {
@@ -35,37 +34,57 @@ fun ItemsListScreen(modifier: Modifier = Modifier, viewModel: OrderViewModel = h
 
 @Composable
 internal fun ItemsListScreen(
-    items: List<String>,
-    onSave: (name: String) -> Unit,
+    items: List<Item>,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier) {
-        var nameOrder by remember { mutableStateOf("Compose") }
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            TextField(
-                value = nameOrder,
-                onValueChange = { nameOrder = it }
-            )
-
-            Button(modifier = Modifier.width(96.dp), onClick = { onSave(nameOrder) }) {
-                Text("Save")
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        items(items.size,
+            { index ->
+                items[index].id
             }
-        }
-        items.forEach {
-            Text("Saved item: $it")
+        ) { index ->
+            val item = items[index]
+            ItemRow(item)
         }
     }
 }
+
+@Composable
+fun ItemRow(item: Item) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
+        Text(text = "ID: ${item.id}")
+        Text(text = "List ID: ${item.listId}")
+        Text(
+            text = "Name: ${item.name}",
+            modifier = Modifier.padding(top = 4.dp)
+        )
+    }
+}
+
 
 // Previews
 
 @Preview(showBackground = true)
 @Composable
 private fun DefaultPreview() {
-    FetchApplicationTheme {  } {
-        ItemsListScreen(listOf("Compose", "Room", "Kotlin"), onSave = {})
+    FetchApplicationTheme {
+        ItemsListScreen(fakeItems)
     }
 }
+
+val fakeItems = listOf(
+    Item(333, 3, "Item 333"),
+    Item(123, 1, null),
+    Item(222, 2, "Item 222"),
+    Item(111, 1, "Item 111"),
+    Item(345, 3, null),
+    Item(654, 6, "Item 111"),
+)

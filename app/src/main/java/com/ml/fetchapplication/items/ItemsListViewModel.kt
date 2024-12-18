@@ -12,12 +12,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ItemsListViewModel @Inject constructor(
     private val itemRepository: ItemRepository
 ) : ViewModel() {
+
 
     val uiState: StateFlow<ItemUiState> =
         itemRepository.items.map<List<Item>, ItemUiState>(::Success)
