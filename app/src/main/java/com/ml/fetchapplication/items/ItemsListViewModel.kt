@@ -20,6 +20,11 @@ class ItemsListViewModel @Inject constructor(
     private val itemRepository: ItemRepository
 ) : ViewModel() {
 
+    init {
+        viewModelScope.launch {
+            itemRepository.fetchItems()
+        }
+    }
 
     val uiState: StateFlow<ItemUiState> =
         itemRepository.items.map<List<Item>, ItemUiState>(::Success)
