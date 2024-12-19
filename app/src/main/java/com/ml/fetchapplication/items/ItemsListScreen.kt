@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -108,15 +109,28 @@ fun ItemRow(item: Item) {
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        Column(
+        Row (
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.primaryContainer)
-                .padding(vertical = 8.dp, horizontal = 16.dp)
+                .padding(vertical = 8.dp, horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = stringResource(R.string.item_id, item.id))
-            Text(text = stringResource(R.string.item_list_id, item.listId))
-            Text(text = stringResource(R.string.item_name, item.name ?: ""))
+            Text(
+                text = item.name.orEmpty(),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.weight(1f)
+            )
+            Column {
+                Text(
+                    text = stringResource(R.string.item_id, item.id),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = stringResource(R.string.item_list_id, item.listId),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
     }
 }
