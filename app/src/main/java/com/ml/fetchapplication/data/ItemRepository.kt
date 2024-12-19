@@ -4,7 +4,7 @@ import com.ml.fetchapplication.data.models.FetchList
 import com.ml.fetchapplication.data.models.groupByListId
 import com.ml.fetchapplication.network.ItemService
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject
 
 interface ItemRepository {
@@ -17,7 +17,7 @@ class DefaultItemRepository @Inject constructor(
     private val itemService: ItemService
 ) : ItemRepository {
 
-    private val _lists = MutableStateFlow<List<FetchList>>(emptyList())
+    private val _lists = MutableSharedFlow<List<FetchList>>()
     override val lists: Flow<List<FetchList>> = _lists
 
     override suspend fun fetchItems() {
