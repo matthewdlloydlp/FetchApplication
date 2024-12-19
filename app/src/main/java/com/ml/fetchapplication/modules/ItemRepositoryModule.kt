@@ -2,7 +2,9 @@ package com.ml.fetchapplication.modules
 
 import com.ml.fetchapplication.data.DefaultItemRepository
 import com.ml.fetchapplication.data.ItemRepository
+import com.ml.fetchapplication.data.models.FetchList
 import com.ml.fetchapplication.data.models.Item
+import com.ml.fetchapplication.data.models.groupByListId
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -24,7 +26,7 @@ interface ItemRepositoryModule {
 }
 
 class FakeItemRepository @Inject constructor() : ItemRepository {
-    override val items: Flow<List<Item>> = flowOf(fakeItems)
+    override val lists: Flow<List<FetchList>> = flowOf(fakeItems.groupByListId())
     override suspend fun fetchItems() {
         // No-op
     }

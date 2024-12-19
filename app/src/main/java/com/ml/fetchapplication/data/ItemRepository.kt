@@ -1,13 +1,14 @@
 package com.ml.fetchapplication.data
 
-import com.ml.fetchapplication.data.models.Item
+import com.ml.fetchapplication.data.models.FetchList
+import com.ml.fetchapplication.data.models.groupByListId
 import com.ml.fetchapplication.network.ItemService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
 interface ItemRepository {
-    val items: Flow<List<Item>>
+    val lists: Flow<List<FetchList>>
 
     suspend fun fetchItems()
 }
@@ -16,15 +17,17 @@ class DefaultItemRepository @Inject constructor(
     private val itemService: ItemService
 ) : ItemRepository {
 
-    private val _items = MutableStateFlow<List<Item>>(emptyList())
-    override val items: Flow<List<Item>> = _items
+    private val _lists = MutableStateFlow<List<FetchList>>(emptyList())
+    override val lists: Flow<List<FetchList>> = _lists
 
     override suspend fun fetchItems() {
         try {
             val response = itemService.getItems()
             if (response.isSuccessful) {
-                _items.emit(
-                    response.body()?.filter { !it.name.isNullOrBlank() } ?: emptyList()
+                _lists.emit(
+                    response.body()?.filter {
+                        !it.name.isNullOrBlank()
+                    }.groupByListId()
                 )
             } else {
                 // Handle error
