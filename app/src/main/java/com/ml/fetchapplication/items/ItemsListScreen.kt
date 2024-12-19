@@ -1,5 +1,6 @@
 package com.ml.fetchapplication.items
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,14 +19,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ml.fetchapplication.FetchApplicationTheme
 import com.ml.fetchapplication.data.models.FetchList
 import com.ml.fetchapplication.data.models.Item
 import com.ml.fetchapplication.data.models.groupByListId
-import com.ml.fetchapplication.ui.theme.FetchApplicationTheme
 
 @Composable
 fun ItemsListScreen(
@@ -33,16 +36,18 @@ fun ItemsListScreen(
 ) {
     val lists by viewModel.uiState.collectAsStateWithLifecycle()
 
-    when(lists) {
+    when (lists) {
         is ItemUiState.Success -> {
             ItemsListScreen(
                 lists = (lists as ItemUiState.Success).data,
                 modifier = modifier
             )
         }
+
         is ItemUiState.Error -> {
             Text((lists as ItemUiState.Error).throwable.message.orEmpty())
         }
+
         ItemUiState.Loading -> {
             Box(
                 contentAlignment = Alignment.Center,
@@ -63,17 +68,21 @@ internal fun ItemsListScreen(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primaryContainer)
     ) {
         lists.forEach {
             val items = it.items
             stickyHeader {
                 Text(
-                    text = "List: ${it.listId}",
+                    text = "List ${it.listId}",
                     modifier = Modifier
+                        .padding(8.dp)
                         .fillMaxWidth()
-                        .background(Color.LightGray)
+                        .background(MaterialTheme.colorScheme.primary)
                         .padding(16.dp),
-                    style = MaterialTheme.typography.titleLarge
+                    color = Color.White,
+                    style = MaterialTheme.typography.titleLarge,
+                    textAlign = TextAlign.Center
                 )
             }
             items(items.size,
@@ -82,14 +91,15 @@ internal fun ItemsListScreen(
                 }
             ) { index ->
                 val item = items[index]
-                ItemRow(item)
+                ItemRow(item, index)
+                HorizontalDivider(color = Color.Black)
             }
         }
     }
 }
 
 @Composable
-fun ItemRow(item: Item) {
+fun ItemRow(item: Item, index: Int) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -97,10 +107,7 @@ fun ItemRow(item: Item) {
     ) {
         Text(text = "ID: ${item.id}")
         Text(text = "List ID: ${item.listId}")
-        Text(
-            text = "Name: ${item.name}",
-            modifier = Modifier.padding(top = 4.dp)
-        )
+        Text(text = "Name: ${item.name}")
     }
 }
 
