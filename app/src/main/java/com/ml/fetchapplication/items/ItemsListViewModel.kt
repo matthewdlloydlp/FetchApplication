@@ -26,8 +26,14 @@ class ItemsListViewModel @Inject constructor(
         }
     }
 
+    // in the future could sort differently
+    val comparator = compareBy<Item> { it.listId }
+        .thenBy { it.name ?: "" }
+
     val uiState: StateFlow<ItemUiState> =
-        itemRepository.items.map<List<Item>, ItemUiState>(::Success)
+        itemRepository.items.map {
+            it.sortedWith(comparator)
+        }.map<List<Item>, ItemUiState>(::Success)
             .catch {
                 Log.d("matt123", it.message ?: "error")
                 emit(ItemUiState.Error(it))
@@ -37,8 +43,6 @@ class ItemsListViewModel @Inject constructor(
                 SharingStarted.WhileSubscribed(5000),
                 ItemUiState.Loading
             )
-
-
 }
 
 sealed interface ItemUiState {

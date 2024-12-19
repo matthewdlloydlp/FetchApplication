@@ -23,7 +23,9 @@ class DefaultItemRepository @Inject constructor(
         try {
             val response = itemService.getItems()
             if (response.isSuccessful) {
-                _items.emit(response.body() ?: emptyList())
+                _items.emit(
+                    response.body()?.filter { !it.name.isNullOrBlank() } ?: emptyList()
+                )
             } else {
                 // Handle error
             }
