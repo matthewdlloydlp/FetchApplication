@@ -27,8 +27,14 @@ interface ItemRepositoryModule {
 
 class FakeItemRepository @Inject constructor() : ItemRepository {
     override val lists: Flow<List<FetchList>> = flowOf(fakeItems.groupByListId())
+    override val item: Flow<Item?> = flowOf(null)
+
     override suspend fun fetchItems() {
         // No-op
+    }
+
+    override suspend fun setItem(item: Item?) {
+        // no-op
     }
 
 }

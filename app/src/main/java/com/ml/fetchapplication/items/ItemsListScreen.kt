@@ -35,23 +35,28 @@ import com.ml.fetchapplication.data.models.groupByListId
 @Composable
 fun ItemsListScreen(
     modifier: Modifier = Modifier,
-    viewModel: ItemsListViewModel = hiltViewModel()
+    viewModel: ItemsListViewModel = hiltViewModel(),
+    onItemClicked: (Item) -> Unit = {}
 ) {
     val lists by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (lists) {
-        is ItemUiState.Success -> {
+        is ItemListUiState.Success -> {
             ItemsListScreen(
-                lists = (lists as ItemUiState.Success).data,
+                lists = (lists as ItemListUiState.Success).data,
+                {
+                    viewModel.onItemClicked(it)
+                    onItemClicked(it)
+                },
                 modifier = modifier
             )
         }
 
-        is ItemUiState.Error -> {
-            Text((lists as ItemUiState.Error).throwable.message.orEmpty())
+        is ItemListUiState.Error -> {
+            Text((lists as ItemListUiState.Error).throwable.message.orEmpty())
         }
 
-        ItemUiState.Loading -> {
+        ItemListUiState.Loading -> {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.size(100.dp)
@@ -66,6 +71,7 @@ fun ItemsListScreen(
 @Composable
 internal fun ItemsListScreen(
     lists: List<FetchList>,
+    onItemClicked: (Item) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -97,19 +103,22 @@ internal fun ItemsListScreen(
                 }
             ) { index ->
                 val item = items[index]
-                ItemRow(item)
+                ItemRow(item, onItemClicked)
             }
         }
     }
 }
 
 @Composable
-fun ItemRow(item: Item) {
+fun ItemRow(item: Item, onItemClicked: (Item) -> Unit = {}) {
     Card(
         shape = RoundedCornerShape(16.dp),
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        onClick = {
+            onItemClicked(item)
+        }
     ) {
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.primaryContainer)

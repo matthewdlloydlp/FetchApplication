@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ml.fetchapplication.data.ItemRepository
 import com.ml.fetchapplication.data.models.FetchList
-import com.ml.fetchapplication.items.ItemUiState.Success
+import com.ml.fetchapplication.data.models.Item
+import com.ml.fetchapplication.items.ItemListUiState.Success
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,20 +26,26 @@ class ItemsListViewModel @Inject constructor(
         }
     }
 
-    val uiState: StateFlow<ItemUiState> =
-        itemRepository.lists.map<List<FetchList>, ItemUiState>(::Success)
+    val uiState: StateFlow<ItemListUiState> =
+        itemRepository.lists.map<List<FetchList>, ItemListUiState>(::Success)
             .catch {
-                emit(ItemUiState.Error(it))
+                emit(ItemListUiState.Error(it))
             }
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5000),
-                ItemUiState.Loading
+                ItemListUiState.Loading
             )
+
+    fun onItemClicked(item: Item) {
+        viewModelScope.launch {
+            itemRepository.setItem(item)
+        }
+    }
 }
 
-sealed interface ItemUiState {
-    object Loading : ItemUiState
-    data class Error(val throwable: Throwable) : ItemUiState
-    data class Success(val data: List<FetchList>) : ItemUiState
+sealed interface ItemListUiState {
+    object Loading : ItemListUiState
+    data class Error(val throwable: Throwable) : ItemListUiState
+    data class Success(val data: List<FetchList>) : ItemListUiState
 }
