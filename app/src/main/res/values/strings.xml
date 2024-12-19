@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">FetchApplication</string>
+    <string name="item_id">ID: %1$s</string>
+    <string name="item_list_id">List ID: %1$s</string>
+    <string name="item_name">Name: %1$s</string>
+    <string name="list_title">List %1$s</string>
 </resources>
