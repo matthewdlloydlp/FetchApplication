@@ -87,7 +87,7 @@ internal fun ItemDetailsScreen(
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.primary)
                         .padding(16.dp),
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.titleLarge,
                     textAlign = TextAlign.Center
                 )
@@ -107,15 +107,18 @@ internal fun ItemDetailsScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.item_details, item.id),
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Text(
                         text = stringResource(R.string.item_id, item.id),
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Text(
                         text = stringResource(R.string.item_list_id, item.listId),
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
             }

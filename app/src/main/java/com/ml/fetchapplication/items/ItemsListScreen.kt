@@ -91,7 +91,7 @@ internal fun ItemsListScreen(
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.primary)
                             .padding(16.dp),
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         style = MaterialTheme.typography.titleLarge,
                         textAlign = TextAlign.Center
                     )
@@ -128,16 +128,19 @@ fun ItemRow(item: Item, onItemClicked: (Item) -> Unit = {}) {
             Text(
                 text = item.name.orEmpty(),
                 style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.weight(1f)
             )
             Column {
                 Text(
                     text = stringResource(R.string.item_id, item.id),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
                     text = stringResource(R.string.item_list_id, item.listId),
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         }
