@@ -2,6 +2,7 @@ package com.ml.fetchapplication.items
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,9 +18,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -74,19 +76,30 @@ internal fun ItemsListScreen(
     onItemClicked: (Item) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val expandedIds = remember { lists.map { it.listId }.toMutableStateList() }
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
     ) {
-        lists.forEach {
-            val items = it.items
+        lists.forEach { fetchList ->
+            val items = fetchList.items
+            val listId = fetchList.listId
             stickyHeader {
                 Card(
                     shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .clickable {
+                            if (expandedIds.contains(listId)) {
+                                expandedIds.remove(listId)
+                            } else {
+                                expandedIds.add(listId)
+                            }
+                        }
                 ) {
                     Text(
-                        text = stringResource(R.string.list_title, it.listId),
+                        text = stringResource(R.string.list_title, listId),
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.primary)
@@ -97,13 +110,15 @@ internal fun ItemsListScreen(
                     )
                 }
             }
-            items(items.size,
-                { index ->
-                    items[index].id
+            if (expandedIds.contains(listId)) {
+                items(items.size,
+                    { index ->
+                        items[index].id
+                    }
+                ) { index ->
+                    val item = items[index]
+                    ItemRow(item, onItemClicked)
                 }
-            ) { index ->
-                val item = items[index]
-                ItemRow(item, onItemClicked)
             }
         }
     }
